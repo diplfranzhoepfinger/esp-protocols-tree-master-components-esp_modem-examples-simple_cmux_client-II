@@ -205,6 +205,8 @@ extern "C" void simple_cmux_client_main(void)
     dce->sync();
     dce->sync();
     dce->sync();
+    
+    
     if (dte_config.uart_config.flow_control == ESP_MODEM_FLOW_CONTROL_HW) {
         if (command_result::OK != dce->set_flow_control(2, 2)) {
             ESP_LOGE(TAG, "Failed to set the set_flow_control mode");
@@ -278,6 +280,20 @@ extern "C" void simple_cmux_client_main(void)
     if (dce->get_imsi(str) == esp_modem::command_result::OK) {
         std::cout << "Modem IMSI number:" << str << std::endl;
     }
+    
+    
+    //Enable NMEA:
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    if (dce->at("AT+CGNSSPWR=1", str, 500) == esp_modem::command_result::OK) {
+        std::cout << "GNSSPWR " << str << std::endl;
+    }  
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    if (dce->at("AT+CGNSSTST=1", str, 500) == esp_modem::command_result::OK) {
+        std::cout << "GNSSTST " << str << std::endl;
+    }  
+    
+    
+    
 
 
 #if CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS == 1
