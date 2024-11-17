@@ -34,6 +34,7 @@
 #include "gpgsv.h"
 
 static const char *TAG = "USB-CDC";
+static const char *TAG_NMEA = "NMEA";
 
 
 #define UART_RX_BUF_SIZE        (1024)
@@ -118,6 +119,7 @@ static bool handle_rx(const uint8_t *data_in, size_t data_len_in, void *arg)
     nmea_s *data;
     
            /* handle data */
+        ESP_LOG_BUFFER_HEXDUMP(TAG_NMEA, data_in, data_len_in, ESP_LOG_WARN);
         data = nmea_parse(start_out, length_out, 0);
         if (data == NULL) {
             printf("Failed to parse the sentence!\n");
@@ -225,7 +227,7 @@ static bool handle_rx(const uint8_t *data_in, size_t data_len_in, void *arg)
             return true;
         }
 
-
+        return false;
 }
 
 /**
