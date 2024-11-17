@@ -116,6 +116,14 @@ private:
 };
 
 
+#ifdef CONFIG_ESP_MODEM_URC_HANDLER
+command_result handle_urc(uint8_t *data, size_t len)
+{
+    ESP_LOG_BUFFER_HEXDUMP("on_read - URC_HANDLER -> ", data, len, ESP_LOG_INFO);
+    return command_result::TIMEOUT;
+}
+#endif
+
 extern "C" void simple_cmux_client_main(void)
 {
     /* Init and register system/core components */
@@ -174,10 +182,29 @@ extern "C" void simple_cmux_client_main(void)
 #error "Unsupported device"
 #endif
     assert(dce);
+    
+#ifdef CONFIG_ESP_MODEM_URC_HANDLER 
+    ESP_LOGI(TAG, "Adding URC handler");
+    dce->set_urc(handle_urc);
+#endif
 
     /* Try to connect to the network and publish an mqtt topic */
     StatusHandler handler;
 
+
+    dce->sync();
+    dce->sync();
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+    dce->sync();
+    dce->sync();
     if (dte_config.uart_config.flow_control == ESP_MODEM_FLOW_CONTROL_HW) {
         if (command_result::OK != dce->set_flow_control(2, 2)) {
             ESP_LOGE(TAG, "Failed to set the set_flow_control mode");
