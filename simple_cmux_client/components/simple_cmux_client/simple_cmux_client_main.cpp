@@ -246,7 +246,7 @@ extern "C" void simple_cmux_client_main(void)
     dce->sync();
     dce->sync();
 
-    /* Read some data from the modem */
+/*     Read some data from the modem 
     std::string str;
     while (dce->get_operator_name(str) != esp_modem::command_result::OK) {
         // Getting operator name could fail... retry after 500 ms
@@ -266,7 +266,7 @@ extern "C" void simple_cmux_client_main(void)
     } else if (handler.get_ip_event_type() == IP_EVENT_PPP_GOT_IP) {
         std::cout << "Got IP address" << std::endl;
 
-        /* When connected to network, subscribe and publish some MQTT data */
+         When connected to network, subscribe and publish some MQTT data 
         MqttClient mqtt(BROKER_URL);
         handler.handle_mqtt(&mqtt);
         mqtt.connect();
@@ -288,7 +288,7 @@ extern "C" void simple_cmux_client_main(void)
         ESP_LOGE(TAG, "PPP client has lost connection... exiting");
         return;
     }
-
+*/
     /* Again reading some data from the modem */
     if (dce->get_imsi(str) == esp_modem::command_result::OK) {
         std::cout << "Modem IMSI number:" << str << std::endl;
