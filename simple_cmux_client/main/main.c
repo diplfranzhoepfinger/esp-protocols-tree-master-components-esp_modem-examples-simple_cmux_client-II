@@ -1,11 +1,22 @@
 #include <stdio.h>
-#include <stdbool.h>
-#include <unistd.h>
+#include "modem_pwkey.h"
+
+extern void simple_cmux_client_main(void);
 
 void app_main(void)
 {
-    while (true) {
-        printf("Hello from app_main!\n");
-        sleep(1);
-    }
+
+
+
+    init_modem_pwkey();
+
+    // power Up does work now. .
+    power_up_modem_pwkey();
+
+
+
+    simple_cmux_client_main();
+
+
+
 }
