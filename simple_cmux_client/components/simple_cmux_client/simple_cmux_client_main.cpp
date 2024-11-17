@@ -119,7 +119,7 @@ private:
 #ifdef CONFIG_ESP_MODEM_URC_HANDLER
 command_result handle_urc(uint8_t *data, size_t len)
 {
-    ESP_LOG_BUFFER_HEXDUMP("on_read", data, len, ESP_LOG_INFO);
+    ESP_LOG_BUFFER_HEXDUMP("on_read - URC_HANDLER -> ", data, len, ESP_LOG_INFO);
     return command_result::TIMEOUT;
 }
 #endif
