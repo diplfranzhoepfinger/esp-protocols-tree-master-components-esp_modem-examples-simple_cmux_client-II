@@ -84,7 +84,7 @@ static bool handle_rx(const uint8_t *data_in, size_t data_len_in, void *arg)
     
 
     if (data_len_in <= 0) {
-        return false;
+        return true;
     }
     s_total_bytes += data_len_in;
 
@@ -92,13 +92,13 @@ static bool handle_rx(const uint8_t *data_in, size_t data_len_in, void *arg)
     char *start = memchr(s_buf, '$', s_total_bytes);
     if (start == NULL) {
         s_total_bytes = 0;
-        return false;
+        return true;
     }
 
     /* find end of line */
     char *end = memchr(start, '\r', s_total_bytes - (start - s_buf));
     if (end == NULL || *(++end) != '\n') {
-        return false;
+        return true;
     }
     end++;
 
@@ -119,7 +119,7 @@ static bool handle_rx(const uint8_t *data_in, size_t data_len_in, void *arg)
     nmea_s *data;
     
            /* handle data */
-        ESP_LOG_BUFFER_HEXDUMP(TAG_NMEA, data_in, data_len_in, ESP_LOG_WARN);
+        ESP_LOG_BUFFER_HEXDUMP(TAG_NMEA, start_out, length_out, ESP_LOG_WARN);
         data = nmea_parse(start_out, length_out, 0);
         if (data == NULL) {
             printf("Failed to parse the sentence!\n");
@@ -227,7 +227,7 @@ static bool handle_rx(const uint8_t *data_in, size_t data_len_in, void *arg)
             return true;
         }
 
-        return false;
+        return true;
 }
 
 /**
