@@ -34,10 +34,10 @@ static const char *TAG = "USB-CDC";
  *   true:  We have processed the received data
  *   false: We expect more data
  */
-static bool handle_rx(const uint8_t *data, size_t data_len, void *arg)
+static bool handle_rx(const uint8_t *start, size_t length, void *arg)
 {
     ESP_LOGI(TAG, "Data received");
-    ESP_LOG_BUFFER_HEXDUMP(TAG, data, data_len, ESP_LOG_INFO);
+    ESP_LOG_BUFFER_HEXDUMP(TAG, start, length, ESP_LOG_INFO);
     return true;
 }
 
