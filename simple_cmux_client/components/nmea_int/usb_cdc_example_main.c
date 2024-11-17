@@ -35,6 +35,12 @@
 
 static const char *TAG = "USB-CDC";
 
+
+#define UART_RX_BUF_SIZE        (1024)
+static char s_buf[UART_RX_BUF_SIZE + 1];
+static size_t s_total_bytes;
+static char *s_last_buf_end;
+
 /**
  * @brief Data received callback
  *
@@ -45,14 +51,74 @@ static const char *TAG = "USB-CDC";
  *   true:  We have processed the received data
  *   false: We expect more data
  */
-static bool handle_rx(const uint8_t *start, size_t length, void *arg)
+static bool handle_rx(const uint8_t *data_in, size_t data_len_in, void *arg)
 {
     ESP_LOGI(TAG, "Data received");
+
+    ESP_LOG_BUFFER_HEXDUMP(TAG, data_in, data_len_in, ESP_LOG_INFO);
+    
+    char *start_out;
+    size_t length_out;
+    char **out_line_buf = &start_out;
+    size_t *out_line_len = &length_out;
+    
+    
+    *out_line_buf = NULL;
+    *out_line_len = 0;
+
+    if (s_last_buf_end != NULL) {
+        /* Data left at the end of the buffer after the last call;
+         * copy it to the beginning.
+         */
+        size_t len_remaining = s_total_bytes - (s_last_buf_end - s_buf);
+        memmove(s_buf, s_last_buf_end, len_remaining);
+        s_last_buf_end = NULL;
+        s_total_bytes = len_remaining;
+    }
+
+    /* Read data from the UART */
+    
+    memcpy((uint8_t *) s_buf + s_total_bytes, data_in, data_len_in);
+    
+    
+
+    if (data_len_in <= 0) {
+        return false;
+    }
+    s_total_bytes += data_len_in;
+
+    /* find start (a dollar sign) */
+    char *start = memchr(s_buf, '$', s_total_bytes);
+    if (start == NULL) {
+        s_total_bytes = 0;
+        return false;
+    }
+
+    /* find end of line */
+    char *end = memchr(start, '\r', s_total_bytes - (start - s_buf));
+    if (end == NULL || *(++end) != '\n') {
+        return false;
+    }
+    end++;
+
+    end[-2] = NMEA_END_CHAR_1;
+    end[-1] = NMEA_END_CHAR_2;
+
+    *out_line_buf = start;
+    *out_line_len = end - start;
+    if (end < s_buf + s_total_bytes) {
+        /* some data left at the end of the buffer, record its position until the next call */
+        s_last_buf_end = end;
+    } else {
+        s_total_bytes = 0;
+    }
+    
+    
     char fmt_buf[32];
     nmea_s *data;
-    ESP_LOG_BUFFER_HEXDUMP(TAG, start, length, ESP_LOG_INFO);
+    
            /* handle data */
-        data = nmea_parse(start, length, 0);
+        data = nmea_parse(start_out, length_out, 0);
         if (data == NULL) {
             printf("Failed to parse the sentence!\n");
             printf("  Type: %.5s (%d)\n", start + 1, nmea_get_type((const char *)start));
@@ -156,9 +222,10 @@ static bool handle_rx(const uint8_t *start, size_t length, void *arg)
             }
 
             nmea_free(data);
+            return true;
         }
 
-    return true;
+
 }
 
 /**
