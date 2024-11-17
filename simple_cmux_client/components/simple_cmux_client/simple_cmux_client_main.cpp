@@ -216,6 +216,13 @@ extern "C" void simple_cmux_client_main(void)
     } else {
         ESP_LOGI(TAG, "not set_flow_control, because 2-wire mode active.");
     }
+    
+    
+    
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+    dce->sync();
+    dce->sync();
 
     /* Setup basic operation mode for the DCE (pin if used, CMUX mode) */
 #if CONFIG_EXAMPLE_NEED_SIM_PIN == 1
@@ -232,6 +239,12 @@ extern "C" void simple_cmux_client_main(void)
         ESP_LOGE(TAG, "Failed to configure multiplexed command mode... exiting");
         return;
     }
+    
+    
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+    dce->sync();
+    dce->sync();
 
     /* Read some data from the modem */
     std::string str;
