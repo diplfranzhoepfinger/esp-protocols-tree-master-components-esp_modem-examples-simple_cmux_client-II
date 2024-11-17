@@ -182,6 +182,11 @@ extern "C" void simple_cmux_client_main(void)
 #error "Unsupported device"
 #endif
     assert(dce);
+    
+#ifdef CONFIG_ESP_MODEM_URC_HANDLER 
+    ESP_LOGI(TAG, "Adding URC handler");
+    dce->set_urc(handle_urc);
+#endif
 
     /* Try to connect to the network and publish an mqtt topic */
     StatusHandler handler;
