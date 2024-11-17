@@ -246,9 +246,9 @@ extern "C" void simple_cmux_client_main(void)
     dce->sync();
     dce->sync();
 
-/*     Read some data from the modem 
+    /* Read some data from the modem */ 
     std::string str;
-    while (dce->get_operator_name(str) != esp_modem::command_result::OK) {
+/*    while (dce->get_operator_name(str) != esp_modem::command_result::OK) {
         // Getting operator name could fail... retry after 500 ms
         vTaskDelay(pdMS_TO_TICKS(500));
     }
@@ -300,7 +300,12 @@ extern "C" void simple_cmux_client_main(void)
     if (dce->at("AT+CGNSSPWR=1", str, 500) == esp_modem::command_result::OK) {
         std::cout << "GNSSPWR " << str << std::endl;
     }  
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    
+    
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+    
+    //here we should wait for  +CGNSSPWR: READY! as URC. 
+    
     if (dce->at("AT+CGNSSTST=1", str, 500) == esp_modem::command_result::OK) {
         std::cout << "GNSSTST " << str << std::endl;
     }  
