@@ -191,6 +191,20 @@ extern "C" void simple_cmux_client_main(void)
     /* Try to connect to the network and publish an mqtt topic */
     StatusHandler handler;
 
+
+    dce->sync();
+    dce->sync();
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+    dce->sync();
+    dce->sync();
     if (dte_config.uart_config.flow_control == ESP_MODEM_FLOW_CONTROL_HW) {
         if (command_result::OK != dce->set_flow_control(2, 2)) {
             ESP_LOGE(TAG, "Failed to set the set_flow_control mode");
