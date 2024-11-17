@@ -24,10 +24,22 @@ dependencies:
     source:
       type: idf
     version: 5.3.1
+  igrr/libnmea:
+    component_hash: d6e78e853e75882c17cd4f200d110b84824e728cefbb84152227f0f4f98d8a50
+    dependencies:
+    - name: idf
+      registry_url: https://components.espressif.com
+      require: private
+      version: '>=4.2'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 0.2.1
 direct_dependencies:
 - espressif/esp_modem
 - espressif/usb_host_cdc_acm
 - idf
-manifest_hash: d1f4fe28b28d25b198558ede27117f6a61513e8a7c918f49015aa91a22d837c7
+- igrr/libnmea
+manifest_hash: 09cfd0eda9a546b18db62c0e22a61bbffad4c09b1adf209f51d6fb581a524a37
 target: esp32s3
 version: 2.0.0
